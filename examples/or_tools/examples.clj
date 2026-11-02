@@ -1,15 +1,22 @@
 (ns or-tools.examples
-  "The worked examples of the OR-Tools guides, solved through this wrapper.
+  "Worked examples solved through this wrapper: the registry of every example.
 
    (answer :cryptarithm) => 72
-   (keys documented)     lists every example with the answer its guide reports.
+   (keys documented)     lists every example with its expected answer.
 
-   Assignment and routing guides live in their own namespaces under or-tools.examples."
+   Guide examples without a namespace of their own live here. The others are
+   or-tools.examples.assignment, .routing, .diet, .planning, .puzzles,
+   .scheduling-cookbook and .routing-cookbook."
   (:require [malli.core :as m]
             [or-tools.bin-packing :as bin-packing]
             [or-tools.cp-sat :as cp-sat]
             [or-tools.examples.assignment :as assignment-examples]
+            [or-tools.examples.diet :as diet]
+            [or-tools.examples.planning :as planning]
+            [or-tools.examples.puzzles :as puzzles]
             [or-tools.examples.routing :as routing-examples]
+            [or-tools.examples.routing-cookbook :as routing-cookbook]
+            [or-tools.examples.scheduling-cookbook :as scheduling-cookbook]
             [or-tools.flow :as flow]
             [or-tools.knapsack :as knapsack]
             [or-tools.linear :as linear]
@@ -211,25 +218,34 @@
 
 ;; The registry of examples
 
+(def ^:private sections
+  "Every namespace of examples, as its documented answers and the function solving them."
+  [[assignment-examples/documented assignment-examples/answer]
+   [routing-examples/documented routing-examples/answer]
+   [puzzles/documented puzzles/answer]
+   [scheduling-cookbook/documented scheduling-cookbook/answer]
+   [diet/documented diet/answer]
+   [planning/documented planning/answer]
+   [routing-cookbook/documented routing-cookbook/answer]])
+
 (def documented
-  "Every example and the answer its guide reports, checked against the guide pages.
-   :pickup-delivery-fleet is the exception: it reports whether each pair holds."
-  (merge {:cp-sat-primer 35
-          :all-solutions 18
-          :cryptarithm 72
-          :n-queens 92
-          :nurse-rostering 13
-          :linear-program 34
-          :integer-program 23
-          :integer-program-arrays 260
-          :max-flow 60
-          :min-cost-flow 150
-          :knapsack 7534
-          :multiple-knapsacks 395
-          :bin-packing 4
-          :job-shop 11}
-         assignment-examples/documented
-         routing-examples/documented))
+  "Every example and its expected answer. Each namespace names the source of its values."
+  (into {:cp-sat-primer 35
+         :all-solutions 18
+         :cryptarithm 72
+         :n-queens 92
+         :nurse-rostering 13
+         :linear-program 34
+         :integer-program 23
+         :integer-program-arrays 260
+         :max-flow 60
+         :min-cost-flow 150
+         :knapsack 7534
+         :multiple-knapsacks 395
+         :bin-packing 4
+         :job-shop 11}
+        (mapcat first)
+        sections))
 
 (def Example
   "An example name."
@@ -243,12 +259,11 @@
 (m/=> whole [:=> [:cat :any] :any])
 
 (defn answer
-  "Solve the example named `example` and return the number its guide reports."
+  "Solve the example named `example` and return its expected answer."
   [example]
-  (cond
-    (contains? assignment-examples/documented example) (assignment-examples/answer example)
-    (contains? routing-examples/documented example) (routing-examples/answer example)
-    :else
+  (if-let [solve (some (fn [[answers solve]] (when (contains? answers example) solve))
+                       sections)]
+    (solve example)
     (case example
       :cp-sat-primer (whole (ok-at (cp-sat/solve cp-sat-primer) [:objective]))
       :all-solutions (count (ok-at (cp-sat/solve-all three-variables {:workers 1}) [:solutions]))

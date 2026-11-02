@@ -5,7 +5,12 @@
             [or-tools.cp-sat :as cp-sat]
             [or-tools.examples :as examples]
             [or-tools.examples.assignment :as assignment-examples]
+            [or-tools.examples.diet :as diet]
+            [or-tools.examples.planning :as planning]
+            [or-tools.examples.puzzles :as puzzles]
             [or-tools.examples.routing :as routing-examples]
+            [or-tools.examples.routing-cookbook :as routing-cookbook]
+            [or-tools.examples.scheduling-cookbook :as scheduling-cookbook]
             [or-tools.routing :as routing]
             [or-tools.support :as support]))
 
@@ -15,6 +20,18 @@
   (doseq [[example expected] examples/documented]
     (testing example
       (is (= expected (examples/answer example))))))
+
+(deftest example-names-do-not-collide-across-namespaces
+  (let [namespaces [assignment-examples/documented
+                    routing-examples/documented
+                    puzzles/documented
+                    scheduling-cookbook/documented
+                    diet/documented
+                    planning/documented
+                    routing-cookbook/documented]
+        own-examples 14]
+    (is (= (+ own-examples (reduce + (map count namespaces)))
+           (count examples/documented)))))
 
 (deftest route-end-times-match-the-raw-java-api
   (let [routes (get-in (routing/solve routing-examples/time-windowed-fleet) [:ok :routes])]
