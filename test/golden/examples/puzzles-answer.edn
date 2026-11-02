@@ -1,0 +1,6 @@
+{:chromatic 3,
+ :involutions 26,
+ :magic 8,
+ :sudoku-count 1,
+ :tour 76,
+ :two-colours :infeasible}
