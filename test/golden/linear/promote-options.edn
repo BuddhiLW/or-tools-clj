@@ -1,0 +1,3 @@
+{:ok {:ok {:time-limit-s 1, :threads 2}},
+ :unknown
+ {:error :linear/invalid-options, :explain {:speed ["disallowed key"]}}}

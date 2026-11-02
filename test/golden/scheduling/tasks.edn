@@ -1,0 +1,19 @@
+{:small
+ [{:job :a,
+   :position 0,
+   :machine :m,
+   :duration 2,
+   :start-var :start/job0-op0,
+   :interval :interval/job0-op0}
+  {:job :a,
+   :position 1,
+   :machine :n,
+   :duration 1,
+   :start-var :start/job0-op1,
+   :interval :interval/job0-op1}
+  {:job :b,
+   :position 0,
+   :machine :m,
+   :duration 3,
+   :start-var :start/job1-op0,
+   :interval :interval/job1-op0}]}

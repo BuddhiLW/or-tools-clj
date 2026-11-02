@@ -1,0 +1,17 @@
+{:small
+ {:variables
+  {:makespan [0 6],
+   :start/job0-op0 [0 6],
+   :start/job0-op1 [0 6],
+   :start/job1-op0 [0 6]},
+  :intervals
+  #:interval{:job0-op0 {:start :start/job0-op0, :size 2},
+             :job0-op1 {:start :start/job0-op1, :size 1},
+             :job1-op0 {:start :start/job1-op0, :size 3}},
+  :constraints
+  [[:<= [:+ :start/job0-op0 2] :start/job0-op1]
+   [:no-overlap [:interval/job0-op0 :interval/job1-op0]]
+   [:no-overlap [:interval/job0-op1]]
+   [:<= [:+ :start/job0-op1 1] :makespan]
+   [:<= [:+ :start/job1-op0 3] :makespan]],
+  :objective [:minimize :makespan]}}

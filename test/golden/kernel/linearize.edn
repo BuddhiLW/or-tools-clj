@@ -1,0 +1,8 @@
+{:cancelling {:terms {}, :constant 0},
+ :difference {:terms {:x 1, :y -1}, :constant -1},
+ :empty-sum {:terms {}, :constant 0},
+ :negation {:terms {:x -1}, :constant 0},
+ :nested {:terms {:x 2, :y 6}, :constant -6},
+ :number {:terms {}, :constant 7},
+ :sum {:terms {:x 1, :y 2}, :constant 3},
+ :variable {:terms {:x 1}, :constant 0}}

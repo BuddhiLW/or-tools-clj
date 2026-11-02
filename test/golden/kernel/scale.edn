@@ -1,0 +1,2 @@
+{:double {:terms {:x 6, :y -2}, :constant 8},
+ :zero {:terms {}, :constant 0}}

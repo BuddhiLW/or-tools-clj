@@ -1,0 +1,4 @@
+{:between {:terms {:x 1}, :lb -2.0, :ub 3.0},
+ :eq {:terms {:x 1}, :lb 1.5, :ub 1.5},
+ :ge {:terms {:x 1, :y -2}, :lb 0.0, :ub ##Inf},
+ :le {:terms {:x 1}, :lb ##-Inf, :ub 2.0}}

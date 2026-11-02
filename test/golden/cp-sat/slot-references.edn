@@ -1,0 +1,12 @@
+{:arcs {:variables #{:b}, :intervals #{}},
+ :demands {:variables #{:x}, :intervals #{:i}},
+ :domain {:variables #{}, :intervals #{}},
+ :events {:variables #{:x}, :intervals #{}},
+ :expr {:variables #{:y :x}, :intervals #{}},
+ :exprs {:variables #{:y :x}, :intervals #{}},
+ :int {:variables #{}, :intervals #{}},
+ :intervals {:variables #{}, :intervals #{:j :i}},
+ :lit {:variables #{:b}, :intervals #{}},
+ :lits {:variables #{:b :a}, :intervals #{}},
+ :rects {:variables #{}, :intervals #{:j :i}},
+ :vars {:variables #{:y :x}, :intervals #{}}}

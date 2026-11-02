@@ -1,0 +1,5 @@
+{:demands [[:i {:terms {}, :constant 2}]],
+ :events [[{:terms {:x 1}, :constant 0} 1]],
+ :expr {:terms {:x 1}, :constant 1},
+ :exprs [{:terms {:x 1}, :constant 0} {:terms {}, :constant 2}],
+ :lit :b}

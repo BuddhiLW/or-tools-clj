@@ -1,0 +1,6 @@
+{:invalid
+ {:error :knapsack/invalid-problem,
+  :explain
+  {:items ["invalid type"], :capacities ["missing required key"]}},
+ :multidimensional {:ok {:status :optimal, :value 9, :items [:c]}},
+ :small {:ok {:status :optimal, :value 110, :items [:a :b]}}}

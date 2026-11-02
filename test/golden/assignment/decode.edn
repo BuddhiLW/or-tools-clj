@@ -1,0 +1,6 @@
+{:infeasible {:status :infeasible},
+ :solved
+ {:status :optimal,
+  :total-cost 3,
+  :assignments
+  [{:worker :a, :task :y, :cost 1} {:worker :b, :task :x, :cost 2}]}}

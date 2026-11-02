@@ -1,0 +1,2 @@
+{:optimal {:status :optimal, :value 9, :items [:b]},
+ :partial {:status :feasible, :value 3, :items [:a]}}

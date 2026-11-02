@@ -1,0 +1,4 @@
+{:nested #{:y :z :x},
+ :number #{},
+ :scaled-to-zero #{:x},
+ :variable #{:x}}

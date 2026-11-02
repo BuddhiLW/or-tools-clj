@@ -1,0 +1,12 @@
+{:failed {:status :no-solution},
+ :routed
+ {:status :optimal,
+  :objective 2,
+  :routes
+  [{:vehicle 0,
+    :cost 2,
+    :stops
+    [{:node 0, :cumuls {}}
+     {:node 2, :cumuls {}}
+     {:node 0, :cumuls {}}]}],
+  :dropped [3]}}

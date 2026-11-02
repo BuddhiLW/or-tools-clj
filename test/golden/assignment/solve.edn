@@ -1,0 +1,3 @@
+{:documented :optimal,
+ :forbidden-pair :assignment/unbalanced,
+ :invalid :assignment/invalid-problem}

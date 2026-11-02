@@ -1,0 +1,8 @@
+{:abnormal :abnormal,
+ :feasible :feasible,
+ :infeasible :infeasible,
+ :invalid :model-invalid,
+ :not-solved :not-solved,
+ :optimal :optimal,
+ :other :unknown,
+ :unbounded :unbounded}

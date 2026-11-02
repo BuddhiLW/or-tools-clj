@@ -1,0 +1,2 @@
+{:invalid {:error :x/bad, :explain ["should be an integer"]},
+ :valid {:ok 1}}

@@ -1,0 +1,8 @@
+{:bad-cost :bad-cost-range,
+ :bad-result :bad-result,
+ :feasible :feasible,
+ :infeasible :infeasible,
+ :not-solved :not-solved,
+ :optimal :optimal,
+ :other :unknown,
+ :unbalanced :unbalanced}

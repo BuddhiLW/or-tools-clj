@@ -1,0 +1,3 @@
+{:invalid :scheduling/invalid-problem,
+ :small {:status :optimal, :makespan 5},
+ :too-tight {:status :infeasible}}

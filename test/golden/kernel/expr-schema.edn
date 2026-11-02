@@ -1,0 +1,22 @@
+{:ints
+ [:schema
+  {:registry
+   #:or-tools.kernel.expr{:expr
+                          [:or
+                           :int
+                           :keyword
+                           [:tuple
+                            [:= :*]
+                            :int
+                            [:ref :or-tools.kernel.expr/expr]]
+                           [:cat
+                            [:= :+]
+                            [:*
+                             [:schema
+                              [:ref :or-tools.kernel.expr/expr]]]]
+                           [:cat
+                            [:= :-]
+                            [:+
+                             [:schema
+                              [:ref :or-tools.kernel.expr/expr]]]]]}}
+  [:ref :or-tools.kernel.expr/expr]]}

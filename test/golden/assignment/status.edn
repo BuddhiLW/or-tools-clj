@@ -1,0 +1,4 @@
+{:infeasible :infeasible,
+ :optimal :optimal,
+ :other :unknown,
+ :overflow :possible-overflow}

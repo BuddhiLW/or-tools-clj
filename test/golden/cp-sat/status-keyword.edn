@@ -1,0 +1,6 @@
+{:feasible :feasible,
+ :infeasible :infeasible,
+ :invalid :model-invalid,
+ :optimal :optimal,
+ :other :unknown,
+ :unknown :unknown}

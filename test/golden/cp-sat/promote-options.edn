@@ -1,0 +1,6 @@
+{:negative
+ {:error :cp-sat/invalid-options,
+  :explain {:workers ["should be at least 1"]}},
+ :ok {:ok {:time-limit-s 1, :workers 2, :seed 3}},
+ :unknown
+ {:error :cp-sat/invalid-options, :explain {:speed ["disallowed key"]}}}

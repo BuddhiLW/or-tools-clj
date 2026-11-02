@@ -1,0 +1,6 @@
+{:infeasible {:status :infeasible},
+ :solved
+ {:status :optimal,
+  :bins-used 2,
+  :bins
+  [{:bin 0, :items [:a], :load 2} {:bin 1, :items [:b], :load 3}]}}

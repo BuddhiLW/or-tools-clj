@@ -1,0 +1,5 @@
+{:with-flows
+ {:status :optimal,
+  :value 4,
+  :flows [{:from :a, :to :b, :capacity 5, :flow 4}]},
+ :without {:status :bad-input}}

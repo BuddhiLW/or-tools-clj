@@ -1,0 +1,5 @@
+{:bad-input :bad-input,
+ :bad-result :bad-result,
+ :optimal :optimal,
+ :other :unknown,
+ :overflow :possible-overflow}

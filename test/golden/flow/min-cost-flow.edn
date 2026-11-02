@@ -1,0 +1,3 @@
+{:documented {:status :optimal, :cost 150},
+ :invalid :flow/invalid-problem,
+ :unbalanced {:status :unbalanced}}

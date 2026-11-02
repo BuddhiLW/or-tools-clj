@@ -1,0 +1,25 @@
+{:empty
+ {:error :assignment/invalid-problem,
+  :explain {:costs ["should have at least 1 elements"]}},
+ :ok
+ {:ok
+  {:arcs
+   [{:left 0, :right 0, :cost 90}
+    {:left 0, :right 1, :cost 76}
+    {:left 0, :right 2, :cost 75}
+    {:left 0, :right 3, :cost 70}
+    {:left 1, :right 0, :cost 35}
+    {:left 1, :right 1, :cost 85}
+    {:left 1, :right 2, :cost 55}
+    {:left 1, :right 3, :cost 65}
+    {:left 2, :right 0, :cost 125}
+    {:left 2, :right 1, :cost 95}
+    {:left 2, :right 2, :cost 90}
+    {:left 2, :right 3, :cost 105}
+    {:left 3, :right 0, :cost 45}
+    {:left 3, :right 1, :cost 110}
+    {:left 3, :right 2, :cost 95}
+    {:left 3, :right 3, :cost 115}],
+   :workers [0 1 2 3],
+   :tasks [0 1 2 3]}},
+ :unbalanced {:error :assignment/unbalanced, :workers 1, :tasks 2}}

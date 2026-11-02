@@ -1,0 +1,9 @@
+{:boolean {:kind :exactly-one, :slots [[:a :b]], :only-if []},
+ :comparison
+ {:kind :<=,
+  :slots [{:terms {:x 1}, :constant 1} {:terms {:y 1}, :constant 0}],
+  :only-if []},
+ :nested
+ {:kind :=,
+  :slots [{:terms {:x 1}, :constant 0} {:terms {}, :constant 1}],
+  :only-if [:a [:not :b]]}}

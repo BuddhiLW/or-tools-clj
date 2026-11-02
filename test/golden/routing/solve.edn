@@ -1,0 +1,3 @@
+{:defect :routing/invalid-structure,
+ :invalid :routing/invalid-problem,
+ :tour {:status :feasible, :objective 6}}

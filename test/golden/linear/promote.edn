@@ -1,0 +1,20 @@
+{:bad-solver
+ {:error :linear/invalid-problem,
+  :explain
+  {:solver
+   ["should be either :cplex, :xpress, :clp, :sat, :cbc, :bop, :scip, :pdlp, :glpk, :gurobi or :glop"]}},
+ :malformed
+ {:error :linear/invalid-problem,
+  :explain {:variables {:x ["should be :bool" "invalid type"]}}},
+ :ok
+ {:ok
+  {:solver-id "GLOP",
+   :variables
+   [{:name :x, :lb 0.0, :ub ##Inf, :integer? false}
+    {:name :y, :lb 0.0, :ub ##Inf, :integer? false}],
+   :constraints
+   [{:terms {:x 1, :y 2}, :lb ##-Inf, :ub 14.0}
+    {:terms {:x 3, :y -1}, :lb 0.0, :ub ##Inf}
+    {:terms {:x 1, :y -1}, :lb ##-Inf, :ub 2.0}],
+   :objective {:sense :maximize, :terms {:x 3, :y 4}, :offset 0.0}}},
+ :unknown {:error :linear/unknown-variable, :unknown #{:nope}}}

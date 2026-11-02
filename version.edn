@@ -1,0 +1,6 @@
+{:lib      io.github.buddhilw/or-tools-clj
+ :minor    1
+ :license  {:name "EPL-1.0" :url "https://www.eclipse.org/legal/epl-v10.html"}
+ :scm-url  "https://github.com/BuddhiLW/or-tools-clj"
+ :src-dirs ["src"]
+ :publish  :clojars}

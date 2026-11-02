@@ -1,0 +1,5 @@
+{:labelled
+ {:arcs [{:from 0, :to 1, :capacity 3} {:from 1, :to 2, :capacity 2}],
+  :source 0,
+  :sink 2,
+  :labels [:s :a :t]}}

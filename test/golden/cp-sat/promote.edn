@@ -1,0 +1,22 @@
+{:malformed
+ {:error :cp-sat/invalid-problem,
+  :explain {:constraints [["invalid dispatch value"]]}},
+ :not-a-map
+ {:error :cp-sat/invalid-problem, :explain ["invalid type"]},
+ :ok
+ {:ok
+  {:variables
+   [{:name :x, :kind :int, :domain [[0 4]]}
+    {:name :y, :kind :int, :domain [[0 4]]}],
+   :intervals [],
+   :constraints
+   [{:kind :<=,
+     :slots
+     [{:terms {:x 1, :y 1}, :constant 0} {:terms {}, :constant 5}],
+     :only-if []}],
+   :objective
+   {:sense :maximize, :form {:terms {:x 1, :y 2}, :constant 0}},
+   :hints {}}},
+ :unknown
+ {:error :cp-sat/unknown-reference,
+  :unknown {:variables #{:nope}, :intervals #{}}}}

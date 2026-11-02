@@ -1,0 +1,9 @@
+{:fail :no-solution,
+ :infeasible :infeasible,
+ :invalid :invalid,
+ :not-solved :not-solved,
+ :optimal :optimal,
+ :other :unknown,
+ :partial :feasible,
+ :success :feasible,
+ :timeout :timeout}

@@ -1,0 +1,67 @@
+{:limited
+ {:variables
+  {:used/bin0 :bool,
+   :used/bin1 :bool,
+   :placed/item0-bin0 :bool,
+   :placed/item0-bin1 :bool,
+   :placed/item1-bin0 :bool,
+   :placed/item1-bin1 :bool,
+   :placed/item2-bin0 :bool,
+   :placed/item2-bin1 :bool},
+  :constraints
+  [[:exactly-one [:placed/item0-bin0 :placed/item0-bin1]]
+   [:exactly-one [:placed/item1-bin0 :placed/item1-bin1]]
+   [:exactly-one [:placed/item2-bin0 :placed/item2-bin1]]
+   [:<=
+    [:+
+     [:* 6 :placed/item0-bin0]
+     [:* 5 :placed/item1-bin0]
+     [:* 4 :placed/item2-bin0]]
+    [:* 10 :used/bin0]]
+   [:<=
+    [:+
+     [:* 6 :placed/item0-bin1]
+     [:* 5 :placed/item1-bin1]
+     [:* 4 :placed/item2-bin1]]
+    [:* 10 :used/bin1]]],
+  :objective [:minimize [:+ :used/bin0 :used/bin1]]},
+ :small
+ {:variables
+  {:placed/item2-bin2 :bool,
+   :used/bin2 :bool,
+   :placed/item1-bin2 :bool,
+   :placed/item2-bin1 :bool,
+   :placed/item0-bin0 :bool,
+   :placed/item2-bin0 :bool,
+   :placed/item0-bin1 :bool,
+   :placed/item1-bin0 :bool,
+   :placed/item0-bin2 :bool,
+   :used/bin1 :bool,
+   :placed/item1-bin1 :bool,
+   :used/bin0 :bool},
+  :constraints
+  [[:exactly-one
+    [:placed/item0-bin0 :placed/item0-bin1 :placed/item0-bin2]]
+   [:exactly-one
+    [:placed/item1-bin0 :placed/item1-bin1 :placed/item1-bin2]]
+   [:exactly-one
+    [:placed/item2-bin0 :placed/item2-bin1 :placed/item2-bin2]]
+   [:<=
+    [:+
+     [:* 6 :placed/item0-bin0]
+     [:* 5 :placed/item1-bin0]
+     [:* 4 :placed/item2-bin0]]
+    [:* 10 :used/bin0]]
+   [:<=
+    [:+
+     [:* 6 :placed/item0-bin1]
+     [:* 5 :placed/item1-bin1]
+     [:* 4 :placed/item2-bin1]]
+    [:* 10 :used/bin1]]
+   [:<=
+    [:+
+     [:* 6 :placed/item0-bin2]
+     [:* 5 :placed/item1-bin2]
+     [:* 4 :placed/item2-bin2]]
+    [:* 10 :used/bin2]]],
+  :objective [:minimize [:+ :used/bin0 :used/bin1 :used/bin2]]}}

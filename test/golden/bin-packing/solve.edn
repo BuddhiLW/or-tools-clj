@@ -1,0 +1,3 @@
+{:invalid :bin-packing/invalid-problem,
+ :oversize {:status :infeasible},
+ :small {:status :optimal, :bins-used 2}}

@@ -1,0 +1,48 @@
+name: staging-gate
+
+# staging is a gate: it runs the suite against the declared classpath, and only
+# a green staging is promoted to main, where release.yml mints the version.
+# This workflow never publishes.
+on:
+  push:
+    branches: [staging]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: staging-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: DeLaGuardo/setup-clojure@13.0
+        with:
+          cli: latest
+
+      - name: Resolve declared classpath
+        run: clojure -P
+
+      - name: Test
+        run: clojure -M:test
+
+      - name: Build the jar and check its license
+        run: |
+          set -euo pipefail
+          clojure -T:build verify-license
+          clojure -T:build jar

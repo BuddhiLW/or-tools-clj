@@ -1,0 +1,13 @@
+{:capacity [{:defect :capacity-per-vehicle, :dimensions [:a]}],
+ :dimension-size [{:defect :dimension-size, :dimensions [:a]}],
+ :droppable-depot [{:defect :droppable-depot}],
+ :duplicate [{:defect :duplicate-dimension}],
+ :mismatch [{:defect :starts-ends-mismatch}],
+ :not-square [{:defect :matrix-not-square}],
+ :out-of-range [{:defect :node-out-of-range, :nodes [4 4]}],
+ :pair-depot [{:defect :pickup-delivery-depot}],
+ :sound [],
+ :unbounded
+ [{:defect :unbounded-metaheuristic, :metaheuristic :tabu-search}],
+ :unknown-dimension [{:defect :unknown-dimension, :dimension :nope}],
+ :vehicles [{:defect :vehicles-mismatch, :vehicles 3, :terminals 1}]}

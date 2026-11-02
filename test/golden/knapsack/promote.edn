@@ -1,0 +1,17 @@
+{:limit
+ {:error :knapsack/solver-limit,
+  :violations [{:limit :max-dimensions, :allowed 1, :actual 2}]},
+ :malformed
+ {:error :knapsack/invalid-problem,
+  :explain
+  {:items ["should have at least 1 elements"],
+   :capacities ["missing required key"]}},
+ :mismatch {:error :knapsack/weight-mismatch, :items [:a]},
+ :ok
+ {:ok
+  {:native-solver "KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER",
+   :ids [:a :b :c],
+   :values [60 50 40],
+   :weights [[5 4 6]],
+   :capacities [10],
+   :time-limit-s nil}}}

@@ -1,0 +1,2 @@
+{:none {:variables #{}, :intervals #{}},
+ :two {:variables #{:y :x}, :intervals #{:i}}}

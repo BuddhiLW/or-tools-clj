@@ -1,0 +1,3 @@
+{:int [:or [:map {:closed true} [:ok :int]] [:map [:error :keyword]]],
+ :string
+ [:or [:map {:closed true} [:ok :string]] [:map [:error :keyword]]]}

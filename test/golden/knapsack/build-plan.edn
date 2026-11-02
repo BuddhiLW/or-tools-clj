@@ -1,0 +1,7 @@
+{:two-dimensions
+ {:native-solver "KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER",
+  :ids [:a :b],
+  :values [1 2],
+  :weights [[2 4] [3 5]],
+  :capacities [5 6],
+  :time-limit-s nil}}

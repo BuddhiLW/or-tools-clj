@@ -1,0 +1,32 @@
+{:full
+ {:variables
+  [{:name :b, :kind :bool}
+   {:name :d, :kind :int, :domain [[0 1] [5 6]]}
+   {:name :s, :kind :int, :domain [[0 9]]}],
+  :intervals
+  [{:name :i,
+    :start {:terms {:s 1}, :constant 0},
+    :size {:terms {}, :constant 2},
+    :end {:terms {:s 1}, :constant 2},
+    :present nil}
+   {:name :j,
+    :start {:terms {:s 1}, :constant 0},
+    :size {:terms {}, :constant 2},
+    :end {:terms {:s 1}, :constant 2},
+    :present :b}],
+  :constraints [{:kind :no-overlap, :slots [[:i :j]], :only-if []}],
+  :objective nil,
+  :hints {:s 1}},
+ :small
+ {:variables
+  [{:name :x, :kind :int, :domain [[0 4]]}
+   {:name :y, :kind :int, :domain [[0 4]]}],
+  :intervals [],
+  :constraints
+  [{:kind :<=,
+    :slots
+    [{:terms {:x 1, :y 1}, :constant 0} {:terms {}, :constant 5}],
+    :only-if []}],
+  :objective
+  {:sense :maximize, :form {:terms {:x 1, :y 2}, :constant 0}},
+  :hints {}}}

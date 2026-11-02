@@ -1,0 +1,7 @@
+{:labelled
+ {:arcs
+  [{:left 0, :right 0, :cost 1}
+   {:left 0, :right 1, :cost 2}
+   {:left 1, :right 1, :cost 3}],
+  :workers [:ana :bo],
+  :tasks [:press :lathe]}}

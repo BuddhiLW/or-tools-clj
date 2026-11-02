@@ -1,0 +1,17 @@
+{:default-solver
+ {:solver-id "GLOP",
+  :variables
+  [{:name :x, :lb 0.0, :ub ##Inf, :integer? false}
+   {:name :y, :lb 0.0, :ub ##Inf, :integer? false}],
+  :constraints
+  [{:terms {:x 1, :y 2}, :lb ##-Inf, :ub 14.0}
+   {:terms {:x 3, :y -1}, :lb 0.0, :ub ##Inf}
+   {:terms {:x 1, :y -1}, :lb ##-Inf, :ub 2.0}],
+  :objective {:sense :maximize, :terms {:x 3, :y 4}, :offset 0.0}},
+ :mip
+ {:solver-id "SCIP",
+  :variables
+  [{:name :b, :lb 0.0, :ub 1.0, :integer? true}
+   {:name :n, :lb 0.0, :ub ##Inf, :integer? true}],
+  :constraints [],
+  :objective {:sense :minimize, :terms {}, :offset 0.0}}}

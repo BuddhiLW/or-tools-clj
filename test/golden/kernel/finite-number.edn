@@ -1,0 +1,6 @@
+{:double true,
+ :inf false,
+ :int true,
+ :nan false,
+ :nil false,
+ :string false}

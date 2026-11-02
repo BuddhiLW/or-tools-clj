@@ -1,0 +1,3 @@
+{:comparison {:variables #{:y :x}, :intervals #{}},
+ :enforced {:variables #{:b :x}, :intervals #{}},
+ :overlap {:variables #{}, :intervals #{:j :i}}}

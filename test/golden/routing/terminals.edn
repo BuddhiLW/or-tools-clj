@@ -1,0 +1,4 @@
+{:default [[0] [0]],
+ :depot [[1 1] [1 1]],
+ :explicit [[1 2] [3 4]],
+ :starts-only [[1 2] [0 0]]}

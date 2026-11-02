@@ -1,0 +1,7 @@
+{:infeasible {:ok {:status :infeasible}},
+ :invalid
+ {:error :cp-sat/invalid-problem,
+  :explain {:variables ["invalid type"]}},
+ :optimal
+ {:ok
+  {:status :optimal, :values {:x 4}, :objective 4.0, :best-bound 4.0}}}

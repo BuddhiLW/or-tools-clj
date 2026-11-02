@@ -1,0 +1,2 @@
+{:missing {:variables #{:nope}, :intervals #{:i}},
+ :resolved {:variables #{}, :intervals #{}}}

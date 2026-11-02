@@ -1,0 +1,4 @@
+{:supplies-only-node
+ {:arcs [{:from 0, :to 1, :capacity 1, :unit-cost 2}],
+  :supplies {0 1, 2 0},
+  :labels [:a :b :c]}}

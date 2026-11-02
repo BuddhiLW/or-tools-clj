@@ -1,0 +1,9 @@
+{:infeasible {:status :infeasible},
+ :solved
+ {:status :optimal,
+  :makespan 5,
+  :machines
+  {:m
+   [{:job :a, :position 0, :start 0, :end 2}
+    {:job :b, :position 0, :start 2, :end 5}],
+   :n [{:job :a, :position 1, :start 4, :end 5}]}}}
