@@ -44,24 +44,50 @@ jobs:
       - name: Check the README's claims
         run: clojure -T:build readme-examples
 
-      - name: Bump patch version
-        run: clojure -T:build bump :level :patch
-
-      - name: Regenerate changelog
-        run: clojure -T:build changelog
-
-      - name: Commit and tag
+      # A version that never reached Clojars is released as it stands, so a run
+      # that failed at Deploy can be retried without skipping a version number.
+      - name: Check whether the current version is published
+        id: current
         run: |
           set -euo pipefail
           VER=$(cat VERSION)
+          POM="https://repo.clojars.org/io/github/buddhilw/or-tools-clj/$VER/or-tools-clj-$VER.pom"
+          if curl -fsSI -o /dev/null "$POM"; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configure git
+        run: |
           git config user.name  "hive-ci"
           git config user.email "ci@hive-agi.local"
+
+      - name: Bump patch version
+        if: steps.current.outputs.published == 'true'
+        run: clojure -T:build bump :level :patch
+
+      - name: Regenerate changelog
+        if: steps.current.outputs.published == 'true'
+        run: clojure -T:build changelog
+
+      - name: Commit the new version
+        if: steps.current.outputs.published == 'true'
+        run: |
+          set -euo pipefail
           git add VERSION CHANGELOG.md
           # [skip ci] stops this push from retriggering the workflow.
-          git commit -m "chore(release): $VER [skip ci]"
-          # Annotated: `git push --follow-tags` ignores lightweight tags.
-          git tag -a "v$VER" -m "release $VER"
-          git push --follow-tags
+          git commit -m "chore(release): $(cat VERSION) [skip ci]"
+          git push
+
+      - name: Tag the version
+        run: |
+          set -euo pipefail
+          VER=$(cat VERSION)
+          if ! git rev-parse -q --verify "refs/tags/v$VER" >/dev/null; then
+            git tag -a "v$VER" -m "release $VER"
+            git push origin "v$VER"
+          fi
 
       - name: Deploy
         env:

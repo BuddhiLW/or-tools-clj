@@ -269,7 +269,8 @@ clj-kondo --lint src test examples
 
 `.github/workflows/release.yml` tests, bumps the patch version, tags `v{VERSION}` and publishes
 to Clojars with [hive-build](https://github.com/hive-agi/hive-build) when a push to `main`
-changes `src`, `deps.edn` or `version.edn`. Other commits do not mint a version.
+changes `src`, `deps.edn` or `version.edn`. Other commits do not mint a version. A version that
+never reached Clojars is released as it stands, so run the workflow again to retry a failed deploy.
 `staging-gate.yml` runs the same suite on `staging` and on pull requests, and never publishes.
 Coordinates live in `version.edn`, and the current version in `VERSION`.
 
