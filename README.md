@@ -170,7 +170,7 @@ public pure function lacks a trifecta.
 
 ## Releasing
 
-`.github/workflows/release.yml` tests, checks the README's claims, bumps the patch version,
+`.github/workflows/release.yml` tests, checks the claims in the docs, bumps the patch version,
 tags `v{VERSION}` and publishes to Clojars with [hive-build](https://github.com/hive-agi/hive-build)
 when a push to `main` changes `src`, `deps.edn` or `version.edn`. Other commits do not mint a
 version. A version that never reached Clojars is released as it stands, so run the workflow

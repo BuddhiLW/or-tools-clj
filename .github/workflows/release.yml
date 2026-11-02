@@ -41,8 +41,12 @@ jobs:
       - name: Test
         run: clojure -M:test
 
-      - name: Check the README's claims
-        run: clojure -T:build readme-examples
+      - name: Check the claims in the docs
+        run: |
+          set -euo pipefail
+          clojure -T:build readme-examples
+          clojure -T:build readme-examples :readme '"doc/reference.md"'
+          clojure -T:build readme-examples :readme '"doc/examples.md"'
 
       # A version that never reached Clojars is released as it stands, so a run
       # that failed at Deploy can be retried without skipping a version number.
