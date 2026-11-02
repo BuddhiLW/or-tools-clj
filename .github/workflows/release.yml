@@ -41,6 +41,9 @@ jobs:
       - name: Test
         run: clojure -M:test
 
+      - name: Check the README's claims
+        run: clojure -T:build readme-examples
+
       - name: Bump patch version
         run: clojure -T:build bump :level :patch
 
