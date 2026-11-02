@@ -25,11 +25,11 @@ input was invalid or the native call failed.
 
 [![Clojars Project](https://img.shields.io/clojars/v/io.github.buddhilw/or-tools-clj.svg)](https://clojars.org/io.github.buddhilw/or-tools-clj)
 
-Add `io.github.buddhilw/or-tools-clj` to `deps.edn` at the version shown on the badge. The
-JVM flag silences the native-access warning on recent JDKs.
+Add `io.github.buddhilw/or-tools-clj` to `deps.edn`. The badge shows the newest version. The JVM
+flag silences the native-access warning on recent JDKs.
 
 ```edn
-{:deps {io.github.buddhilw/or-tools-clj {:mvn/version "<version>"}}
+{:deps {io.github.buddhilw/or-tools-clj {:mvn/version "0.1.1"}}
  :aliases {:dev {:jvm-opts ["--enable-native-access=ALL-UNNAMED"]}}}
 ```
 
