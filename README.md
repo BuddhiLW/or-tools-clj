@@ -1,85 +1,92 @@
 # or-tools-clj
 
-A data-first Clojure wrapper around [Google OR-Tools](https://developers.google.com/optimization)
-9.15. Problems and solutions are plain Clojure data, and every call returns a
-[hive-dsl](https://clojars.org/io.github.hive-agi/hive-dsl) Result: `{:ok solution}` or
-`{:error category ...}`.
-
-An infeasible model is not an error. It is `{:ok {:status :infeasible}}`. Errors mean the
-input was invalid or the native call failed.
-
-## Coverage of the OR-Tools guides
-
-| Guide | Namespace | Entry points |
-|---|---|---|
-| Constraint optimization (CP-SAT) | `or-tools.cp-sat` | `solve`, `solve-all` |
-| Linear and mixed-integer optimization | `or-tools.linear` | `solve` |
-| Network flows | `or-tools.flow` | `max-flow`, `min-cost-flow` |
-| Assignment | `or-tools.assignment` | `solve` |
-| Knapsack | `or-tools.knapsack` | `solve` |
-| Vehicle routing | `or-tools.routing` | `solve` |
-| Bin packing | `or-tools.bin-packing` | `solve` |
-| Job-shop scheduling | `or-tools.scheduling` | `solve` |
-
-## Setup
+Solve assignment, routing, scheduling and planning problems from Clojure with
+[Google OR-Tools](https://developers.google.com/optimization) 9.15. Problems and answers are plain data.
 
 [![Clojars Project](https://img.shields.io/clojars/v/io.github.buddhilw/or-tools-clj.svg)](https://clojars.org/io.github.buddhilw/or-tools-clj)
+[![cljdoc](https://cljdoc.org/badge/io.github.buddhilw/or-tools-clj)](https://cljdoc.org/d/io.github.buddhilw/or-tools-clj)
+[![release](https://github.com/BuddhiLW/or-tools-clj/actions/workflows/release.yml/badge.svg)](https://github.com/BuddhiLW/or-tools-clj/actions/workflows/release.yml)
+[![License: EPL-1.0](https://img.shields.io/badge/license-EPL--1.0-blue.svg)](https://www.eclipse.org/legal/epl-v10.html)
 
-Add `io.github.buddhilw/or-tools-clj` to `deps.edn`. The badge shows the newest version. The JVM
-flag silences the native-access warning on recent JDKs.
+## What it solves
+
+| You want to | Namespace | Example to read |
+|---|---|---|
+| assign people to tasks, one each, at least cost | `or-tools.assignment` | `:assignment` |
+| assign people to tasks with extra rules (teams, workload limits) | `or-tools.cp-sat` | `:assignment-teams` |
+| plan delivery routes for one or more vehicles | `or-tools.routing` | `:capacitated-fleet` |
+| visit customers inside their opening hours | `or-tools.routing` | `:time-windowed-fleet` |
+| build a timetable of jobs on machines | `or-tools.scheduling` | `:job-shop` |
+| build a staff roster or book meeting rooms | `or-tools.cp-sat` | `:nurse-rostering`, `:meeting-rooms` |
+| choose how much of each thing to make or buy | `or-tools.linear` | `:production-plan-glop` |
+| find the cheapest mix that meets minimums (diet, blend) | `or-tools.linear` | `:stigler-annual-price` |
+| pick the most valuable items that fit a budget or a bag | `or-tools.knapsack` | `:knapsack` |
+| pack items into as few boxes as possible | `or-tools.bin-packing` | `:bin-packing` |
+| ship goods through a network, or find a shortest path | `or-tools.flow` | `:min-cost-flow`, `:shortest-path-s-x` |
+| solve a puzzle or any yes/no rule system | `or-tools.cp-sat` | `:sudoku` |
+
+Each keyword names a worked example. [doc/examples.md](doc/examples.md) lists them all.
+
+## Install
 
 ```edn
 {:deps {io.github.buddhilw/or-tools-clj {:mvn/version "0.1.1"}}
  :aliases {:dev {:jvm-opts ["--enable-native-access=ALL-UNNAMED"]}}}
 ```
 
-The native library loads on the first solve.
+The OR-Tools jar carries the native library, which loads on the first solve. The JVM flag
+silences the native-access warning on recent JDKs. The test suite runs on Linux x86-64.
 
-## Examples
+## A first model
 
-### CP-SAT
+A bakery sells bread at 3 and cake at 8. Bread takes 2 hours of oven time and cake 4, the oven
+has 40 hours, and there are 14 trays. How many of each should it bake?
 
 ```clojure
 (require '[or-tools.cp-sat :as cp])
 
-(-> (cp/solve {:variables {:x [0 10] :y [0 10]}
-               :constraints [[:<= [:+ :x :y] 12]]
-               :objective [:maximize [:+ :x [:* 2 :y]]]})
+(-> (cp/solve {:variables {:bread [0 100] :cake [0 100]}
+               :constraints [[:<= [:+ [:* 2 :bread] [:* 4 :cake]] 40]
+                             [:<= [:+ :bread :cake] 14]]
+               :objective [:maximize [:+ [:* 3 :bread] [:* 8 :cake]]]})
     :ok
     (select-keys [:status :objective :values]))
-;; => {:status :optimal :objective 22.0 :values {:x 2 :y 10}}
-
-;; :solutions arrives in solver order, so compare it as a set.
-(-> (cp/solve-all {:variables {:a [0 1] :b [0 1]}
-                   :constraints [[:!= :a :b]]})
-    (get-in [:ok :solutions])
-    set)
-;; => #{{:a 0 :b 1} {:a 1 :b 0}}
+;; => {:status :optimal :objective 80.0 :values {:bread 0 :cake 10}}
 ```
 
-Variables are `:bool`, `[lo hi]` or `{:domain [[0 2] [5 7]]}`. An expression is a number, a
-variable, `[:+ e*]`, `[:- e+]` or `[:* coefficient e]`. Every constraint is `[kind & slots]`:
+A model names its variables with their ranges, lists constraints as vectors, and states what
+to maximize or minimize. An expression is a number, a variable, `[:+ ...]`, `[:- ...]` or
+`[:* coefficient expression]`.
 
-| Family | Kinds |
-|---|---|
-| Linear | `:<=` `:>=` `:<` `:>` `:=` `:!=` `[:in e ranges]` |
-| Boolean | `:bool-or` `:bool-and` `:bool-xor` `:at-most-one` `:at-least-one` `:exactly-one` `[:implies a b]` |
-| Global | `:all-different` `:element` `:allowed` `:forbidden` `:inverse` `:automaton` `:circuit` `:multi-circuit` `:reservoir` |
-| Arithmetic | `:min=` `:max=` `:abs=` `:mul=` `:div=` `:mod=` |
-| Scheduling | `:no-overlap` `:no-overlap-2d` `:cumulative` |
-| Enforcement | `[:only-if [literals] constraint]`, where a literal is `:b` or `[:not :b]` |
+## How results work
 
-Declare intervals under `:intervals`, for example
-`{:task {:start :s :size 3 :present :b}}`. Options are `:time-limit-s`, `:workers`, `:seed`,
-`:relative-gap`, `:log?`, `:all-solutions?` and `:solution-limit`.
+Every call returns `{:ok solution}` or `{:error category ...}`.
 
-### Linear and mixed-integer
+`:error` means the input was invalid or the native call failed. The category says which.
+
+```clojure
+(require '[or-tools.cp-sat :as cp])
+
+(cp/solve {:variables {:x [0 3]} :constraints [[:> :y 5]]})
+;; => {:error :cp-sat/unknown-reference :unknown {:variables #{:y} :intervals #{}}}
+```
+
+A model with no solution is not an error. It is an ok result whose `:status` is `:infeasible`.
+Check `:status` before you read `:values`.
+
+```clojure
+(require '[or-tools.cp-sat :as cp])
+
+(get-in (cp/solve {:variables {:x [0 3]} :constraints [[:> :x 5]]}) [:ok :status])
+;; => :infeasible
+```
+
+The linear solvers work in floating point, so a result is close to the exact value but may not
+equal it. Round before you compare.
 
 ```clojure
 (require '[or-tools.linear :as lp])
 
-;; Floating-point results are close to, not equal to, the exact values:
-;; here the raw objective is 33.99999999999999. The result also holds :duals and :reduced-costs.
 (-> (lp/solve {:variables {:x {:lb 0} :y {:lb 0}}
                :constraints [[:<= [:+ :x [:* 2 :y]] 14]
                              [:>= [:* 3 :x] :y]
@@ -88,193 +95,85 @@ Declare intervals under `:intervals`, for example
     (get-in [:ok :objective])
     Math/round)
 ;; => 34
-
-(-> (lp/solve {:solver :scip
-               :variables {:x {:lb 0 :integer? true}}
-               :objective [:maximize :x]
-               :constraints [[:between 0 :x 7]]})
-    (get-in [:ok :objective])
-    Math/round)
-;; => 7
 ```
 
-`:solver` defaults to `:glop`. It also accepts `:pdlp` `:clp` `:glpk` `:scip` `:cbc` `:sat`
-`:bop` `:gurobi` `:cplex` `:xpress`. A backend missing from the build returns
-`{:error :linear/solver-unavailable}`.
+The raw objective here is 33.99999999999999.
 
-GLOP with presolve reports an unbounded model as `:infeasible`. This is native behaviour. To
-tell the two apart, pass `{:solver-parameters "use_preprocessing: false"}` or use `:scip`.
+## Choosing a solver
 
-### Flows, assignment, knapsack
+- **CP-SAT** (`or-tools.cp-sat`) works on whole numbers and yes/no choices. Use it for puzzles,
+  rosters, timetables, assignments with side rules, and anything with "if this then that",
+  "all different" or "these must not overlap". `or-tools.scheduling` and
+  `or-tools.bin-packing` build CP-SAT models for you.
+- **Linear** (`or-tools.linear`) works on quantities that may be fractional: how much to make,
+  buy or ship. It also reports dual prices. Mark variables `:integer? true` and pick `:scip`,
+  `:cbc` or `:sat` when the amounts must be whole.
+- **Routing** (`or-tools.routing`) plans vehicle tours over a distance matrix, with loads,
+  time windows and optional visits. It searches heuristically, so its answer is usually good
+  but not proved best.
+- **Flow, assignment and knapsack** are specialised solvers for their one problem shape. Use
+  them when the problem fits as is.
 
-Labels may be keywords, strings or integers.
+## Coverage of the OR-Tools guides
 
-```clojure
-(require '[or-tools.flow :as flow]
-         '[or-tools.assignment :as assignment]
-         '[or-tools.knapsack :as knapsack])
+| Guide | Namespace | Entry points | Example |
+|---|---|---|---|
+| [Constraint optimization](https://developers.google.com/optimization/cp) | `or-tools.cp-sat` | `solve`, `solve-all` | `:cp-sat-primer` |
+| [Linear optimization](https://developers.google.com/optimization/lp) | `or-tools.linear` | `solve` | `:linear-program` |
+| [Mixed-integer optimization](https://developers.google.com/optimization/mip) | `or-tools.linear` | `solve` | `:integer-program` |
+| [Network flows](https://developers.google.com/optimization/flow) | `or-tools.flow` | `max-flow`, `min-cost-flow` | `:max-flow` |
+| [Assignment](https://developers.google.com/optimization/assignment) | `or-tools.assignment`, `or-tools.cp-sat` | `solve` | `:assignment` |
+| [Knapsack](https://developers.google.com/optimization/pack/knapsack) | `or-tools.knapsack` | `solve` | `:knapsack` |
+| [Bin packing](https://developers.google.com/optimization/pack/bin_packing) | `or-tools.bin-packing` | `solve` | `:bin-packing` |
+| [Scheduling](https://developers.google.com/optimization/scheduling) | `or-tools.scheduling`, `or-tools.cp-sat` | `solve` | `:job-shop` |
+| [Vehicle routing](https://developers.google.com/optimization/routing) | `or-tools.routing` | `solve` | `:traveling-salesperson` |
 
-;; :flows annotates each arc with :flow.
-(-> (flow/max-flow {:source :s :sink :t
-                    :arcs [{:from :s :to :a :capacity 3}
-                           {:from :a :to :t :capacity 2}]})
-    (get-in [:ok :value]))
-;; => 2
+The [depot resources](https://developers.google.com/optimization/routing/cvrptw_resources)
+routing example is not reproduced, because the wrapper does not expose vehicle intervals at a
+depot.
 
-(-> (flow/min-cost-flow {:supplies {:s 2 :t -2}
-                         :arcs [{:from :s :to :t :capacity 5 :unit-cost 3}]})
-    (get-in [:ok :cost]))
-;; => 6
+## Further reading
 
-;; An absent pair is forbidden. Workers and tasks must be equal in number.
-(-> (assignment/solve {:costs {:ana {:lathe 90 :press 76}
-                               :bo {:lathe 35 :press 85}}})
-    (get-in [:ok :total-cost]))
-;; => 111
-
-(-> (knapsack/solve {:capacities [10]
-                     :items [{:id :a :value 60 :weights [5]}
-                             {:id :b :value 50 :weights [4]}
-                             {:id :c :value 40 :weights [6]}]})
-    :ok
-    (select-keys [:value :items]))
-;; => {:value 110 :items [:a :b]}
-```
-
-### Routing
-
-```clojure
-(require '[or-tools.routing :as routing])
-
-(routing/solve
- {:matrix [[0 2 9] [2 0 6] [9 6 0]]
-  :vehicles 1
-  :depot 0
-  :dimensions [{:name :load :transit {:demands [0 1 1]} :capacity 5}
-               {:name :time :transit {:matrix [[0 2 9] [2 0 6] [9 6 0]]}
-                :capacity 60 :slack 30 :start-at-zero? false
-                :windows {1 [5 20]}}]
-  :droppable {2 1000}
-  :search {:first-solution :path-cheapest-arc
-           :metaheuristic :guided-local-search
-           :time-limit-s 1}})
-;; :routes holds {:vehicle :cost :stops [{:node :cumuls {...}}]}, plus :objective and :dropped
-```
-
-Dimensions cover capacity, time windows and distance limits. Other keys are `:starts`,
-`:ends`, `:pickups-deliveries` and `:fixed-vehicle-cost`. Metaheuristics that never terminate
-on their own are refused unless `:time-limit-s` or `:solution-limit` is set.
-
-A window on a vehicle's start node limits departure only, so a round trip may return after
-the depot window closes. A window on a separate end node limits arrival. Set
-`:finalize-cumuls? true` on a dimension to minimize each route's start and end values.
-
-### Bin packing and scheduling
-
-Both compile to CP-SAT and accept its options.
-
-```clojure
-(require '[or-tools.bin-packing :as bins]
-         '[or-tools.scheduling :as scheduling])
-
-(-> (bins/solve {:capacity 10 :items {:a 6 :b 5 :c 4}})
-    (get-in [:ok :bins-used]))
-;; => 2
-
-;; :machines holds a timetable per machine.
-(-> (scheduling/solve {:jobs {:j0 [{:machine :m0 :duration 3} {:machine :m1 :duration 2}]
-                              :j1 [{:machine :m1 :duration 4}]}})
-    (get-in [:ok :makespan]))
-;; => 6
-```
-
-## Guide examples
-
-`examples/` reproduces worked examples of the
-[OR-Tools guides](https://developers.google.com/optimization) as plain data. The examples are not
-in the published jar, so clone this repository to run them. At a REPL started with `clj -M:examples`:
-
-```clojure no-run
-(require '[or-tools.examples :as ex])
-(ex/answer :cryptarithm)
-;; => 72
-```
-
-`or-tools.examples/documented` maps each example to the answer in the table, and the test suite
-checks every one against the real solver. The table's values were compared with the guide pages
-on 2026-11-02.
-
-| Guide page | Example | Answer |
-|---|---|---|
-| [CP-SAT](https://developers.google.com/optimization/cp/cp_example) | `:cp-sat-primer` | 35 |
-| [All solutions](https://developers.google.com/optimization/cp/cp_solver) | `:all-solutions` | 18 solutions |
-| [Cryptarithmetic](https://developers.google.com/optimization/cp/cryptarithmetic) | `:cryptarithm` | 72 solutions |
-| [N-queens](https://developers.google.com/optimization/cp/queens) | `:n-queens` | 92 solutions |
-| [Employee scheduling](https://developers.google.com/optimization/scheduling/employee_scheduling) | `:nurse-rostering` | 13 requests met |
-| [Linear program](https://developers.google.com/optimization/lp/lp_example) | `:linear-program` | 34 |
-| [Integer program](https://developers.google.com/optimization/mip/mip_example) | `:integer-program` | 23 |
-| [Integer program, arrays](https://developers.google.com/optimization/mip/mip_var_array) | `:integer-program-arrays` | 260 |
-| [Maximum flow](https://developers.google.com/optimization/flow/maxflow) | `:max-flow` | 60 |
-| [Minimum cost flow](https://developers.google.com/optimization/flow/mincostflow) | `:min-cost-flow` | 150 |
-| [Assignment](https://developers.google.com/optimization/assignment/linear_assignment) | `:assignment` | 265 |
-| [Assignment, forbidden pair](https://developers.google.com/optimization/assignment/linear_assignment) | `:assignment-forbidden-pair` | 276 |
-| [Assignment, task sizes](https://developers.google.com/optimization/assignment/assignment_cp) | `:assignment-task-sizes` | 326 |
-| [Assignment, teams](https://developers.google.com/optimization/assignment/assignment_teams) | `:assignment-teams` | 250 |
-| [Assignment, allowed groups](https://developers.google.com/optimization/assignment/assignment_groups) | `:assignment-groups` | 239 |
-| [Knapsack](https://developers.google.com/optimization/pack/knapsack) | `:knapsack` | 7534 |
-| [Multiple knapsacks](https://developers.google.com/optimization/pack/multiple_knapsack) | `:multiple-knapsacks` | 395 |
-| [Bin packing](https://developers.google.com/optimization/pack/bin_packing) | `:bin-packing` | 4 bins |
-| [Job shop](https://developers.google.com/optimization/scheduling/job_shop) | `:job-shop` | makespan 11 |
-| [Traveling salesperson](https://developers.google.com/optimization/routing/tsp) | `:traveling-salesperson` | 7293 |
-| [Vehicle routing](https://developers.google.com/optimization/routing/vrp) | `:balanced-fleet` | longest route 1712 |
-| [Capacity constraints](https://developers.google.com/optimization/routing/cvrp) | `:capacitated-fleet` | 6208 |
-| [Dropping visits](https://developers.google.com/optimization/routing/penalties) | `:droppable-fleet` | 7936 |
-| [Time windows](https://developers.google.com/optimization/routing/vrptw) | `:time-windowed-fleet` | 82 minutes |
-| [Pickups and deliveries](https://developers.google.com/optimization/routing/pickup_delivery) | `:pickup-delivery-distance` | 6916 |
-
-The routing search can beat a guide's printed answer. `:droppable-fleet` reproduces the guide with
-a first solution only. With guided local search it finds a lower objective than the guide's 7936,
-and a test checks that plan by hand. `:balanced-fleet` also stops at its first solution, which
-matches the guide's output.
-
-[Stigler diet](https://developers.google.com/optimization/lp/stigler_diet) is not reproduced,
-because its table of 77 foods is too large to copy here. The
-[depot resources](https://developers.google.com/optimization/routing/cvrptw_resources) routing
-example is not reproduced either, because the wrapper does not expose vehicle intervals at a depot.
+- [doc/reference.md](doc/reference.md): every variable form, constraint, option and result
+  field, per namespace.
+- [doc/examples.md](doc/examples.md): every worked example, where its expected answer comes
+  from, how to run it, and three walkthroughs.
 
 ## Architecture
 
-Each bounded context has the same strata, lowest first:
+Each problem family has the same layers, lowest first:
 
-| Stratum | Namespace | Role |
+| Layer | Namespace | Role |
 |---|---|---|
-| Kernel | `or-tools.kernel.*` | Shared value objects, linear forms, label indexing |
-| Domain | `or-tools.<context>.model` | Schemas, pure promotion from problem to plan, decoding |
-| Port | `or-tools.ports` | One role-sized protocol per context |
-| Boundary | `or-tools.<context>.native` | The only code touching Java and native objects |
-| Facade | `or-tools.<context>` | Collect, promote, call the port, decode |
+| Kernel | `or-tools.kernel.*` | Shared schemas, linear forms, label indexing |
+| Domain | `or-tools.<family>.model` | Schemas, pure translation from problem to plan, decoding |
+| Port | `or-tools.ports` | One protocol per family |
+| Boundary | `or-tools.<family>.native` | The only code that touches Java and native objects |
+| Facade | `or-tools.<family>` | Validate, translate, call the port, decode |
 
-Each facade reads a dynamic `*engine*` at call time, so a test or another backend can bind its
-own port implementation without redefining vars.
+Each facade reads a dynamic `*engine*` at call time, so a test can bind its own port
+implementation.
 
 ## Development
 
 ```bash
-clojure -M:test                  # full suite
+clojure -M:test                  # full suite against the real solver
 clojure -T:build readme-examples # run this README's clojure blocks and check each ;; => claim
+clojure -T:build readme-examples :readme '"doc/reference.md"'
+clojure -T:build readme-examples :readme '"doc/examples.md"'
 clj-kondo --lint src test examples
 ```
 
+Tests use `hive-test.trifecta/deftrifecta` (golden, property and mutation facets). Goldens live
+in `test/golden`. `or-tools.gates-test` fails when a function lacks a malli contract or a
+public pure function lacks a trifecta.
+
 ## Releasing
 
-`.github/workflows/release.yml` tests, bumps the patch version, tags `v{VERSION}` and publishes
-to Clojars with [hive-build](https://github.com/hive-agi/hive-build) when a push to `main`
-changes `src`, `deps.edn` or `version.edn`. Other commits do not mint a version. A version that
-never reached Clojars is released as it stands, so run the workflow again to retry a failed deploy.
-`staging-gate.yml` runs the same suite on `staging` and on pull requests, and never publishes.
-Coordinates live in `version.edn`, and the current version in `VERSION`.
-
-Tests use `hive-test.trifecta/deftrifecta` (golden, property and mutation facets). Goldens live
-in `test/golden`. `or-tools.gates-test` reads its universe from the source files and fails when
-a function lacks a malli contract or a public pure function lacks a trifecta. Boundary
-namespaces are exercised through their facades against the real solver.
+`.github/workflows/release.yml` tests, checks the README's claims, bumps the patch version,
+tags `v{VERSION}` and publishes to Clojars with [hive-build](https://github.com/hive-agi/hive-build)
+when a push to `main` changes `src`, `deps.edn` or `version.edn`. Other commits do not mint a
+version. A version that never reached Clojars is released as it stands, so run the workflow
+again to retry a failed deploy. `staging-gate.yml` runs the same suite on `staging` and on pull
+requests, and never publishes. Coordinates live in `version.edn` and the current version in
+`VERSION`.
